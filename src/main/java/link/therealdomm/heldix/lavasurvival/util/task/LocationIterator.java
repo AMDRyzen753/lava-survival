@@ -35,33 +35,21 @@ public class LocationIterator {
             List<Location> locations = new ArrayList<>();
             CuboidRegion region = values.getRegion();
             World world = Bukkit.getWorld(values.getWorld());
-            int x = values.getXInitial();
-            int y = values.getYInitial();
-            int z = values.getZInitial();
-            int iteration = values.getIteration();
-            Location xPositive = new Location(world, x, y, z).add((iteration+1), 0, 0);
-            Location xNegative = new Location(world, x, y, z).subtract((iteration+1), 0, 0);
-            Location yPositive = new Location(world, x, y, z).add(0, (iteration+1), 0);
-            Location yNegative = new Location(world, x, y, z).subtract(0, (iteration+1), 0);
-            Location zPositive = new Location(world, x, y, z).add(0, 0, (iteration+1));
-            Location zNegative = new Location(world, x, y, z).subtract(0, 0, (iteration+1));
-            if (region.isInside(xPositive)) {
-                locations.add(xPositive);
-            }
-            if (region.isInside(xNegative)) {
-                locations.add(xNegative);
-            }
-            if (region.isInside(yPositive)) {
-                locations.add(yPositive);
-            }
-            if (region.isInside(yNegative)) {
-                locations.add(yNegative);
-            }
-            if (region.isInside(zPositive)) {
-                locations.add(zPositive);
-            }
-            if (region.isInside(zNegative)) {
-                locations.add(zNegative);
+            int xI = values.getXInitial();
+            int yI = values.getYInitial();
+            int zI = values.getZInitial();
+            int run = values.getIteration();
+            for (int x = xI - run; x <= xI + run; x++) {
+                for (int y = yI - run; y <= yI + run; y++) {
+                    for (int z = zI - run; z <= zI + run; z++) {
+                        if ((xI - x) * (xI - x) + (yI - y) * (yI - y) + (zI - z) * (zI - z) <= (run*run)) {
+                            if (region.isInside(1, x, y, z)) {
+                                Location location = new Location(world, x, y, z);
+                                locations.add(location);
+                            }
+                        }
+                    }
+                }
             }
             completableFuture.complete(locations);
         });

@@ -27,7 +27,7 @@ public class CuboidRegion implements Serializable, Listener {
     private boolean listening = false;
 
     public CuboidRegion(Location l1, Location l2) {
-        if (!l1.getWorld().getName().equals(l2.getWorld().getName())) {
+        if (!Objects.requireNonNull(l1.getWorld()).getName().equals(Objects.requireNonNull(l2.getWorld()).getName())) {
             throw new IllegalArgumentException("Locations must be in the same world!");
         }
         this.worldName = l1.getWorld().getName();
@@ -78,8 +78,14 @@ public class CuboidRegion implements Serializable, Listener {
         return x >= this.x1 && x <= this.x2 && y >= this.y1 && y <= this.y2 && z >= this.z1 && z <= this.z2;
     }
 
+    public boolean isInside(int offSet, int x, int y, int z) {
+        return x >= this.x1+offSet && x <= this.x2-offSet &&
+                y >= this.y1+offSet && y <= this.y2-offSet &&
+                z >= this.z1+offSet && z <= this.z2-offSet;
+    }
+
     public boolean isInside(Location location) {
-        if (!this.worldName.equalsIgnoreCase(location.getWorld().getName())) {
+        if (!this.worldName.equalsIgnoreCase(Objects.requireNonNull(location.getWorld()).getName())) {
             return false;
         }
         return this.isInside(location.getBlockX(), location.getBlockY(), location.getBlockZ());

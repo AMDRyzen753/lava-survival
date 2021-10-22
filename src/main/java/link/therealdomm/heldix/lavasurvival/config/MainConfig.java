@@ -25,6 +25,7 @@ public class MainConfig implements Config {
     private ConfigLocation lobbySpawnLocation = new ConfigLocation();
     private Integer increaseLava = 10;
     private Integer lobbyTimer = 60;
+    private Integer fullRoundTimer = 10;
     private Integer[] lobbyAnnounceTimes = new Integer[]{60, 30, 20, 10, 5, 3, 2, 1};
     private Integer restartTimer = 20;
     private Integer[] restartAnnounceTimes = new Integer[]{20, 10, 5, 3, 2, 1};
@@ -32,5 +33,8 @@ public class MainConfig implements Config {
     private Material buildingBlock = Material.NETHERRACK;
     private Integer buildTime = 60;
     private Integer[] buildAnnounceTimes = new Integer[]{60, 30, 20, 10, 5, 3, 2, 1};
+    private Integer minPlayers = 4;
+    private Integer maxPlayers = 24;
+    private boolean usePremiumKick = true;
 
 }

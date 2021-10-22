@@ -33,7 +33,7 @@ public class MapLoader {
         if (availableMaps.isEmpty()) {
             return null;
         }
-        int i = ThreadLocalRandom.current().nextInt(0, availableMaps.size()-1);
+        int i = availableMaps.size() > 1 ? ThreadLocalRandom.current().nextInt(0, availableMaps.size()-1) : 0;
         Map map;
         if ((map = availableMaps.get(i)) != null) {
             return map;

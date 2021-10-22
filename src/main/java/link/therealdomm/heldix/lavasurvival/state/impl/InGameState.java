@@ -7,6 +7,7 @@ import link.therealdomm.heldix.lavasurvival.state.GameState;
 import link.therealdomm.heldix.lavasurvival.util.lava.LavaAlgorithm;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -32,6 +33,7 @@ public class InGameState extends GameState implements Listener {
     }
 
     public void initLavaTask() {
+        Bukkit.getOnlinePlayers().forEach(player -> player.getInventory().clear());
         Map currentMap = this.getPlugin().getMapManager().getCurrentMap();
         this.lavaAlgorithm = new LavaAlgorithm(currentMap.getCuboidRegion().getRandomLocation(),
                 currentMap.getCuboidRegion());
@@ -73,6 +75,9 @@ public class InGameState extends GameState implements Listener {
         this.getPlugin().getServer().getPluginManager().registerEvents(this, this.getPlugin());
         Bukkit.getOnlinePlayers().forEach(player -> player.getInventory()
                 .addItem(new ItemStack(this.getPlugin().getMainConfig().getBuildingBlock(), 1)));
+        Bukkit.getOnlinePlayers().forEach(player -> player.teleport(
+                this.getPlugin().getMapManager().getCurrentMap().getMapConfig().getSpawnLocation().toLocation()
+        ));
         AtomicInteger integer = new AtomicInteger(this.getPlugin().getMainConfig().getBuildTime());
         this.buildTask = Bukkit.getScheduler().runTaskTimer(
                 this.getPlugin(),
@@ -94,12 +99,11 @@ public class InGameState extends GameState implements Listener {
         );
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (event.isCancelled()) {
-            event.setBuild(true);
-            event.getPlayer().getInventory().getItemInMainHand().setAmount(1);
-        }
+        event.setCancelled(false);
+        event.setBuild(true);
+        event.getPlayer().getInventory().getItemInMainHand().setAmount(1);
     }
 
 }

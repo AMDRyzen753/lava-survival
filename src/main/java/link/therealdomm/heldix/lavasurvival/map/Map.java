@@ -12,6 +12,10 @@ import org.bukkit.WorldCreator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
 
 /**
  * @author TheRealDomm
@@ -30,9 +34,21 @@ public class Map {
         this.mapConfig = ConfigLoader.load(MapConfig.class, new File(file, "map_config.json"));
     }
 
-    private boolean loadMap() {
+    public boolean loadMap() {
         try {
-            Files.copy(Bukkit.getWorldContainer().toPath(), this.mapFolder.toPath());
+            File destination = new File(Bukkit.getWorldContainer(), this.mapFolder.getName());
+            if (!destination.exists() && !destination.mkdir()) {
+                throw new IllegalStateException("Could not create map folder for loaded map!");
+            }
+            Path sourceDir = this.mapFolder.toPath();
+            Files.walk(sourceDir).forEach(sourcePath -> {
+                try {
+                    Path targetPath = destination.toPath().resolve(sourceDir.relativize(sourcePath));
+                    Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    LavaSurvivalPlugin.getInstance().getLogger().log(Level.WARNING, "", e);
+                }
+            });
             World world = WorldCreator.name(this.mapFolder.getName()).createWorld();
             if (world != null) {
                 this.world = world;

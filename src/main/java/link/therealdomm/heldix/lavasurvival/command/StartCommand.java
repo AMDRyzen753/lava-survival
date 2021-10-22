@@ -1,5 +1,7 @@
 package link.therealdomm.heldix.lavasurvival.command;
 
+import link.therealdomm.heldix.lavasurvival.state.GameState;
+import link.therealdomm.heldix.lavasurvival.state.impl.LobbyGameState;
 import link.therealdomm.heldix.lavasurvival.util.command.PluginCommand;
 import org.bukkit.command.CommandSender;
 
@@ -15,6 +17,7 @@ public class StartCommand extends PluginCommand {
 
     @Override
     public void onCommand(CommandSender sender, String s, String... strings) {
+        GameState.getGameState(LobbyGameState.class).startCountdown();
 
     }
 }

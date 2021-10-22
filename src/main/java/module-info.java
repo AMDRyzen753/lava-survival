@@ -5,5 +5,6 @@ module lava.survival {
     requires lombok;
     requires gson;
     requires annotations;
+    requires reflections;
 
 }

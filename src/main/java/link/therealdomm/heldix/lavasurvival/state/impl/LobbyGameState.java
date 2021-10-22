@@ -4,6 +4,7 @@ import link.therealdomm.heldix.lavasurvival.countdown.LobbyCountdown;
 import link.therealdomm.heldix.lavasurvival.handler.MessageHandler;
 import link.therealdomm.heldix.lavasurvival.state.EnumGameState;
 import link.therealdomm.heldix.lavasurvival.state.GameState;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author TheRealDomm
  * @since 21.10.2021
  */
+@Getter
 public class LobbyGameState extends GameState {
 
     private BukkitTask waitingTask;
@@ -23,7 +25,11 @@ public class LobbyGameState extends GameState {
         setCurrentGameState(this);
     }
 
-    public void startCountDown() {
+    public void startCountdown() {
+        if (this.waitingTask != null) {
+            this.waitingTask.cancel();
+            this.waitingTask = null;
+        }
         this.lobbyCountdown = new LobbyCountdown();
         this.lobbyCountdown.startCountdown(this.getPlugin().getMainConfig().getLobbyTimer());
     }

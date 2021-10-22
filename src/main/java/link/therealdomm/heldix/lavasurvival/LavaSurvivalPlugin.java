@@ -11,6 +11,7 @@ import link.therealdomm.heldix.lavasurvival.util.mysql.MySQLConnector;
 import link.therealdomm.heldix.lavasurvival.util.register.PluginRegisterUtility;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.annotation.plugin.ApiVersion;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
 import org.bukkit.plugin.java.annotation.plugin.author.Author;
 
@@ -22,6 +23,7 @@ import java.io.File;
  */
 @Getter
 @Author("TheRealDomm")
+@ApiVersion(ApiVersion.Target.v1_16)
 @Plugin(name = "LavaSurvival", version = "1.0.0")
 public class LavaSurvivalPlugin extends JavaPlugin {
 
@@ -46,6 +48,9 @@ public class LavaSurvivalPlugin extends JavaPlugin {
         }
         this.mapManager = new MapManager(this, mapFolder);
         this.mapManager.prepareRandomMap();
+        if (!this.mapManager.getCurrentMap().loadMap()) {
+            throw new IllegalStateException("Could not load map " + this.mapManager.getCurrentMap().getMapFolder().getName());
+        }
         this.mainConfig = ConfigLoader.load(MainConfig.class, new File(this.getDataFolder(), "config.json"));
         this.messageConfig = ConfigLoader.load(MessageConfig.class, new File(this.getDataFolder(), "messages.json"));
         this.connector = new MySQLConnector(this.mainConfig.getMySQLData());

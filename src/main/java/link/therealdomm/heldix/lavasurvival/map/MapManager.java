@@ -25,8 +25,9 @@ public class MapManager {
         Map map = MapLoader.getRandomMap();
         if (map != null) {
             this.currentMap = map;
+        } else {
+            throw new IllegalStateException("Could not find any map to prepare!");
         }
-        throw new IllegalStateException("Could not find any map to prepare!");
     }
 
 }

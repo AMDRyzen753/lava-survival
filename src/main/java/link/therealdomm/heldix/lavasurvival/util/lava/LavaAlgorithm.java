@@ -77,12 +77,12 @@ public class LavaAlgorithm {
     public synchronized void changeLocationsSynchronous(List<Location> locations) {
         this.iterationCount++;
         for (Location location : locations) {
+            if (location.getBlock().getType().equals(Material.LAVA)) {
+                continue;
+            }
             Bukkit.getScheduler().runTask(
                     LavaSurvivalPlugin.getInstance(),
-                    () -> {
-                        location.getBlock().setType(Material.LAVA, false);
-                        location.getBlock().getState().update(true, false);
-                    }
+                    () -> location.getBlock().setType(Material.LAVA, false)
             );
         }
     }

@@ -9,16 +9,13 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.reflections.Reflections;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,14 +38,15 @@ public class PluginRegisterUtility {
     }
 
     public void registerCommands(String packageName) {
-        Class[] classes;
+        Set<Class<? extends PluginCommand>> classes;
         try {
-            classes = this.getClassesOf(packageName);
+            Reflections reflections = new Reflections(packageName);
+            classes = reflections.getSubTypesOf(PluginCommand.class);
         } catch (Exception e) {
             this.logger.log(Level.WARNING, "Could not find any command due to an error!", e);
             return;
         }
-        SimpleCommandMap commandMap = null;
+        SimpleCommandMap commandMap;
         try {
             Field bukkitMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             bukkitMap.setAccessible(true);
@@ -61,8 +59,8 @@ public class PluginRegisterUtility {
             this.logger.log(Level.SEVERE, "Could not invoke command map! No command will be registered!");
             return;
         }
-        for (Class clazz : classes) {
-            if (clazz.isAssignableFrom(PluginCommand.class)) {
+        for (Class<?> clazz : classes) {
+            if (PluginCommand.class.isAssignableFrom(clazz)) {
                 try {
                     PluginCommand pluginCommand = (PluginCommand) clazz.getConstructors()[0].newInstance();
                     Command command = new Command(pluginCommand.getName()) {
@@ -87,15 +85,16 @@ public class PluginRegisterUtility {
     }
 
     public void registerListeners(String packageName) {
-        Class[] classes;
+        Set<Class<? extends Listener>> classes;
         try {
-            classes = this.getClassesOf(packageName);
+            Reflections reflections = new Reflections(packageName);
+            classes = reflections.getSubTypesOf(Listener.class);
         } catch (Exception e) {
             this.logger.log(Level.WARNING, "Could not find any listener due to an error!", e);
             return;
         }
-        for (Class clazz : classes) {
-            if (clazz.isAssignableFrom(Listener.class)) {
+        for (Class<?> clazz : classes) {
+            if (Listener.class.isAssignableFrom(clazz)) {
                 try {
                     Listener listener = (Listener) clazz.getConstructors()[0].newInstance();
                     this.server.getPluginManager().registerEvents(listener, this.plugin);
@@ -104,40 +103,6 @@ public class PluginRegisterUtility {
                 }
             }
         }
-    }
-
-    private Class[] getClassesOf(String packageName) throws IOException, ClassNotFoundException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        assert classLoader != null;
-        String path = packageName.replace('.', '/');
-        Enumeration<URL> resources = classLoader.getResources(path);
-        List<File> directories = new ArrayList<>();
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            directories.add(new File(resource.getFile()));
-        }
-        List<Class> classes = new ArrayList<>();
-        for (File directory : directories) {
-            classes.addAll(findClasses(directory, packageName));
-        }
-        return classes.toArray(Class[]::new);
-    }
-
-    private List<Class> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class> classes = new ArrayList<>();
-        if (!directory.exists()) {
-            return classes;
-        }
-        File[] files = directory.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                assert !file.getName().contains(".");
-                classes.addAll(findClasses(file, packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(".class")) {
-                classes.add(Class.forName(packageName + "." + file.getName().substring(0, file.getName().length()-6)));
-            }
-        }
-        return classes;
     }
 
 }
