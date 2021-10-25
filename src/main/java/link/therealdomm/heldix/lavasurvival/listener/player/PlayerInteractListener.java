@@ -1,5 +1,6 @@
 package link.therealdomm.heldix.lavasurvival.listener.player;
 
+import link.therealdomm.heldix.lavasurvival.LavaSurvivalPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -12,7 +13,11 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        event.setCancelled(true);
+        if (!event.getPlayer().getInventory().getItemInMainHand().getType().equals(
+                LavaSurvivalPlugin.getInstance().getMainConfig().getBuildingBlock()
+        )) {
+            event.setCancelled(true);
+        }
     }
 
 }

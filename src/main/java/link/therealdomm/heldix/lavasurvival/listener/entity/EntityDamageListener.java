@@ -1,5 +1,7 @@
 package link.therealdomm.heldix.lavasurvival.listener.entity;
 
+import link.therealdomm.heldix.lavasurvival.player.LavaPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -12,10 +14,14 @@ public class EntityDamageListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) ||
-                event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) ||
-                event.getCause().equals(EntityDamageEvent.DamageCause.LAVA)) {
-            return;
+        if (event.getEntity() instanceof Player player) {
+            if (LavaPlayer.getPlayer(player).isInGame()) {
+                if (event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) ||
+                        event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) ||
+                        event.getCause().equals(EntityDamageEvent.DamageCause.LAVA)) {
+                    return;
+                }
+            }
         }
         event.setCancelled(true);
     }

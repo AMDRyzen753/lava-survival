@@ -28,16 +28,16 @@ public class PlayerJoinListener implements Listener {
         player.setFoodLevel(20);
         player.setHealth(20);
         event.setJoinMessage(null);
-        player.teleport(LavaSurvivalPlugin.getInstance().getMainConfig().getLobbySpawnLocation().toLocation());
         if (GameState.getGameState(LobbyGameState.class) == null) {
-            if (GameState.getGameState(InGameState.class) != null) {
-                // TODO: 22.10.2021  
-                //BlockPartyPlugin.getInstance().getSpectatorHandler().setSpectator(player);
-            }
+            LavaSurvivalPlugin.getInstance().getSpectatorHandler().setSpectator(player);
+            player.teleport(LavaSurvivalPlugin.getInstance().getMapManager().getCurrentMap()
+                    .getMapConfig().getSpecLocation().toLocation());
             return;
         }
         LavaPlayer.getPlayer(player);
-        //BlockPlayer.getPlayer(player);
+        player.teleport(LavaSurvivalPlugin.getInstance().getMainConfig().getLobbySpawnLocation().toLocation());
+        LavaSurvivalPlugin.getInstance().getScoreboardManager().createDefault(player.getUniqueId()).setScoreboard();
+        LavaSurvivalPlugin.getInstance().getScoreboardManager().updateScoreboards();
         if (LavaSurvivalPlugin.getInstance().getMainConfig().getMinPlayers() <= Bukkit.getOnlinePlayers().size()) {
             if (Objects.requireNonNull(GameState.getGameState(LobbyGameState.class)).getLobbyCountdown() == null) {
                 Objects.requireNonNull(GameState.getGameState(LobbyGameState.class)).getWaitingTask().cancel();

@@ -24,6 +24,7 @@ public class MapLoader {
         File[] mapFolders = file.listFiles((dir, name) -> new File(dir, name).isDirectory());
         if (mapFolders != null && mapFolders.length > 0) {
             for (File mapFolder : mapFolders) {
+                LavaSurvivalPlugin.getInstance().getLogger().info("Loaded Map " + mapFolder.getName() + " to cache!");
                 availableMaps.add(new Map(mapFolder));
             }
         }
@@ -33,7 +34,7 @@ public class MapLoader {
         if (availableMaps.isEmpty()) {
             return null;
         }
-        int i = availableMaps.size() > 1 ? ThreadLocalRandom.current().nextInt(0, availableMaps.size()-1) : 0;
+        int i = availableMaps.size() == 1 ? 0 : ThreadLocalRandom.current().nextInt(0, availableMaps.size()-1);
         Map map;
         if ((map = availableMaps.get(i)) != null) {
             return map;

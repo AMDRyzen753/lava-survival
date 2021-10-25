@@ -17,8 +17,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class MapConfig implements Config {
 
-    private double configVersion = 1.0D;
+    private double configVersion = 1.1D;
     private ConfigLocation spawnLocation = new ConfigLocation();
+    private ConfigLocation specLocation = new ConfigLocation();
     private ConfigLocation firstCorner = new ConfigLocation();
     private ConfigLocation secondCorner = new ConfigLocation();
     private String mapName = "UNKNOWN";

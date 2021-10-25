@@ -24,7 +24,6 @@ public class ConfigLoader {
      */
     public static void save(Config config, File file) {
         try {
-            //@Cleanup BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             @Cleanup BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             GSON.toJson(config, writer);

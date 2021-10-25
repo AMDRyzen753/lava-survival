@@ -30,4 +30,17 @@ public class MapManager {
         }
     }
 
+    public boolean loadMap(String name) {
+        Map map = MapLoader.getMapByName(name);
+        if (map != null) {
+            this.currentMap = map;
+            return true;
+        }
+        return false;
+    }
+
+    public void killMap() {
+        this.currentMap = null;
+    }
+
 }

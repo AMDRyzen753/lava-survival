@@ -2,15 +2,13 @@ package link.therealdomm.heldix.lavasurvival.state.impl;
 
 import link.therealdomm.heldix.lavasurvival.handler.MessageHandler;
 import link.therealdomm.heldix.lavasurvival.map.Map;
+import link.therealdomm.heldix.lavasurvival.player.LavaPlayer;
+import link.therealdomm.heldix.lavasurvival.scoreboard.ScoreType;
 import link.therealdomm.heldix.lavasurvival.state.EnumGameState;
 import link.therealdomm.heldix.lavasurvival.state.GameState;
 import link.therealdomm.heldix.lavasurvival.util.lava.LavaAlgorithm;
+import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -21,15 +19,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author TheRealDomm
  * @since 21.10.2021
  */
-public class InGameState extends GameState implements Listener {
+public class InGameState extends GameState {
 
-    private LavaAlgorithm lavaAlgorithm;
+    @Getter private boolean buildTime = true;
+    @Getter private LavaAlgorithm lavaAlgorithm;
     private BukkitTask lavaTask;
     private BukkitTask buildTask;
 
     public InGameState() {
         super(EnumGameState.IN_GAME);
         setCurrentGameState(this);
+        for (LavaPlayer player : LavaPlayer.getPlayers()) {
+            player.setInGame(true);
+            player.addPlayedGame();
+        }
+        this.getPlugin().getScoreboardManager().updateScoreboards(ScoreType.PLAYERS_ALIVE);
     }
 
     public void initLavaTask() {
@@ -61,24 +65,28 @@ public class InGameState extends GameState implements Listener {
             this.lavaTask.cancel();
             this.lavaTask = null;
         }
+        this.buildTime = false;
     }
 
     @Override
     public void onNextGameState() {
         if (this.getGameState() == EnumGameState.IN_GAME) {
+            this.onReset();
+            Bukkit.getOnlinePlayers().forEach(player ->
+                    player.teleport(this.getPlugin().getMainConfig().getRestartLobbyLocation().toLocation()));
             new EndingGameState();
         }
     }
 
     @Override
     public void onInit() {
-        this.getPlugin().getServer().getPluginManager().registerEvents(this, this.getPlugin());
         Bukkit.getOnlinePlayers().forEach(player -> player.getInventory()
                 .addItem(new ItemStack(this.getPlugin().getMainConfig().getBuildingBlock(), 1)));
         Bukkit.getOnlinePlayers().forEach(player -> player.teleport(
                 this.getPlugin().getMapManager().getCurrentMap().getMapConfig().getSpawnLocation().toLocation()
         ));
         AtomicInteger integer = new AtomicInteger(this.getPlugin().getMainConfig().getBuildTime());
+        this.buildTime = true;
         this.buildTask = Bukkit.getScheduler().runTaskTimer(
                 this.getPlugin(),
                 () -> {
@@ -86,7 +94,7 @@ public class InGameState extends GameState implements Listener {
                         this.buildTask.cancel();
                         this.buildTask = null;
                         this.initLavaTask();
-                        HandlerList.unregisterAll(this);
+                        this.buildTime = false;
                         return;
                     }
                     if (Arrays.asList(this.getPlugin().getMainConfig().getBuildAnnounceTimes()).contains(integer.get())) {
@@ -97,13 +105,6 @@ public class InGameState extends GameState implements Listener {
                 0,
                 20
         );
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onBlockPlace(BlockPlaceEvent event) {
-        event.setCancelled(false);
-        event.setBuild(true);
-        event.getPlayer().getInventory().getItemInMainHand().setAmount(1);
     }
 
 }

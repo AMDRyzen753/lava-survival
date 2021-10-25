@@ -6,5 +6,6 @@ module lava.survival {
     requires gson;
     requires annotations;
     requires reflections;
+    requires ProtocolLib;
 
 }

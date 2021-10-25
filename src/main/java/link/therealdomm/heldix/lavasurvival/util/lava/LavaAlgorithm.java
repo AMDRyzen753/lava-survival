@@ -1,12 +1,10 @@
 package link.therealdomm.heldix.lavasurvival.util.lava;
 
 import link.therealdomm.heldix.lavasurvival.LavaSurvivalPlugin;
+import link.therealdomm.heldix.lavasurvival.scoreboard.ScoreType;
 import link.therealdomm.heldix.lavasurvival.util.region.CuboidRegion;
 import link.therealdomm.heldix.lavasurvival.util.task.LocationIterator;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,7 +22,7 @@ public class LavaAlgorithm {
 
     private final Location initialLocation;
     private final CuboidRegion region;
-    private int iterationCount = 0;
+    @Getter private int iterationCount = 0;
     private int fails = 0;
 
     public LavaAlgorithm(Location initialLocation, CuboidRegion region) {
@@ -76,6 +74,7 @@ public class LavaAlgorithm {
 
     public synchronized void changeLocationsSynchronous(List<Location> locations) {
         this.iterationCount++;
+        LavaSurvivalPlugin.getInstance().getScoreboardManager().updateScoreboards(ScoreType.LAVA_SIZE);
         for (Location location : locations) {
             if (location.getBlock().getType().equals(Material.LAVA)) {
                 continue;

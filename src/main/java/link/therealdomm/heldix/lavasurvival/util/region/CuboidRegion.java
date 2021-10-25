@@ -1,15 +1,9 @@
 package link.therealdomm.heldix.lavasurvival.util.region;
 
-import link.therealdomm.heldix.lavasurvival.event.CuboidEnterEvent;
-import link.therealdomm.heldix.lavasurvival.event.CuboidLeaveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.plugin.Plugin;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -95,52 +89,11 @@ public class CuboidRegion implements Serializable, Listener {
         return this.isInside(player.getLocation());
     }
 
-    public void registerListener(Plugin plugin) {
-        if (!this.listening) {
-            plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        }
-    }
-
     public Location getRandomLocation() {
         int x = ThreadLocalRandom.current().nextInt(this.x1, this.x2);
         int y = ThreadLocalRandom.current().nextInt(this.y1, this.y2);
         int z = ThreadLocalRandom.current().nextInt(this.z1, this.z2);
         return new Location(Bukkit.getWorld(this.worldName), x, y, z);
-    }
-
-    public void unregisterListener() {
-        if (this.listening) {
-            HandlerList.unregisterAll(this);
-            this.listening = false;
-        }
-    }
-
-    @EventHandler
-    public void onMove(PlayerMoveEvent event) {
-        if (!this.isInside(event.getFrom()) && this.isInside(Objects.requireNonNull(event.getTo()))) {
-            CuboidEnterEvent cuboidEnterEvent = new CuboidEnterEvent(event.getPlayer(), this);
-            Bukkit.getServer().getPluginManager().callEvent(cuboidEnterEvent);
-            if (cuboidEnterEvent.isCancelled()) {
-                Location from = event.getFrom();
-                Location to = event.getTo();
-                to.setX(from.getX());
-                to.setY(from.getY());
-                to.setZ(from.getZ());
-                event.getPlayer().teleport(to);
-            }
-        }
-        else if (this.isInside(event.getFrom()) && !this.isInside(Objects.requireNonNull(event.getTo()))) {
-            CuboidLeaveEvent cuboidLeaveEvent = new CuboidLeaveEvent(event.getPlayer(), this);
-            Bukkit.getServer().getPluginManager().callEvent(cuboidLeaveEvent);
-            if (cuboidLeaveEvent.isCancelled()) {
-                Location from = event.getFrom();
-                Location to = event.getTo();
-                to.setX(from.getX());
-                to.setY(from.getY());
-                to.setZ(from.getZ());
-                event.getPlayer().teleport(to);
-            }
-        }
     }
 
 }

@@ -9,6 +9,7 @@ public enum ScoreType {
     MAP,
     PLAYER_COUNT,
     PLAYERS_ALIVE,
-    LAVA_SIZE
+    LAVA_SIZE,
+    TEXT
 
 }

@@ -12,6 +12,7 @@ public class EntityInteractListener implements Listener {
 
     @EventHandler
     public void onInteract(EntityInteractEvent event) {
+        event.getEntity().sendMessage("Geht!!!");
         event.setCancelled(true);
     }
 

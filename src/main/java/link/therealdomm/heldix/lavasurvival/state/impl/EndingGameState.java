@@ -2,6 +2,7 @@ package link.therealdomm.heldix.lavasurvival.state.impl;
 
 import link.therealdomm.heldix.lavasurvival.handler.CloudHandler;
 import link.therealdomm.heldix.lavasurvival.handler.MessageHandler;
+import link.therealdomm.heldix.lavasurvival.player.LavaPlayer;
 import link.therealdomm.heldix.lavasurvival.state.EnumGameState;
 import link.therealdomm.heldix.lavasurvival.state.GameState;
 import org.bukkit.Bukkit;
@@ -36,7 +37,16 @@ public class EndingGameState extends GameState {
 
     @Override
     public void onInit() {
-
+        for (LavaPlayer player : LavaPlayer.getPlayers()) {
+            player.getPlayer().sendMessage(
+                    MessageHandler.getMessage(
+                            "stats",
+                            player.getStatsModel().getDeaths(),
+                            player.getStatsModel().getWonGames(),
+                            player.getStatsModel().getGamesPlayed()
+                    )
+            );
+        }
         AtomicInteger integer = new AtomicInteger(this.getPlugin().getMainConfig().getRestartTimer());
         this.restartTask = Bukkit.getScheduler().runTaskTimer(
                 this.getPlugin(),
@@ -50,7 +60,7 @@ public class EndingGameState extends GameState {
                         return;
                     }
                     if (Arrays.asList(this.getPlugin().getMainConfig().getRestartAnnounceTimes()).contains(integer.get())) {
-                        Bukkit.broadcastMessage(MessageHandler.getMessage("ending.restart"));
+                        Bukkit.broadcastMessage(MessageHandler.getMessage("ending.restart", integer.get()));
                     }
                     integer.getAndDecrement();
                 },

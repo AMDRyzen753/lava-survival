@@ -86,6 +86,7 @@ public class PlayerScoreboard {
         }
         Team team;
         if ((team = scoreboard.getTeam("t" + line.hashCode())) != null) {
+            text = text.replaceAll("&", "§");
             Objective objective = scoreboard.getObjective("aaa");
             Optional<String> entry = team.getEntries().stream().findFirst();
             if (text.length() <= 16) {
@@ -116,6 +117,9 @@ public class PlayerScoreboard {
             return;
         }
         Scoreboard scoreboard = player.getScoreboard();
+        if (scoreboard.getObjective("aaa") != null) {
+            Objects.requireNonNull(scoreboard.getObjective("aaa")).unregister();
+        }
         Objective objective = scoreboard.registerNewObjective("aaa", "dummy", "NAME");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(this.header.length() > 32 ? this.header.substring(0, 32) : this.header);
@@ -123,7 +127,7 @@ public class PlayerScoreboard {
             Team team = scoreboard.getTeam("t" + line.hashCode()) == null ?
                     scoreboard.registerNewTeam("t" + line.hashCode()) :
                     scoreboard.getTeam("t" + line.hashCode());
-            String text = line.getText();
+            String text = line.getText().replaceAll("&", "§");
             if (text.length() <= 16) {
                 team.setPrefix(text);
                 team.addEntry(line.getEntry());

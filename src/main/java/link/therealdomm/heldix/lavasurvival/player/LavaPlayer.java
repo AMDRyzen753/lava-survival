@@ -3,9 +3,11 @@ package link.therealdomm.heldix.lavasurvival.player;
 import link.therealdomm.heldix.lavasurvival.LavaSurvivalPlugin;
 import link.therealdomm.heldix.lavasurvival.util.model.StatsModel;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +20,10 @@ import java.util.UUID;
 public class LavaPlayer {
 
     private static final Map<UUID, LavaPlayer> PLAYER_MAP = new HashMap<>();
+
+    public static Collection<LavaPlayer> getPlayers() {
+        return PLAYER_MAP.values();
+    }
 
     public static void remove(UUID uuid) {
         PLAYER_MAP.remove(uuid);
@@ -45,12 +51,17 @@ public class LavaPlayer {
         return lavaPlayer;
     }
 
+    public static boolean hasPlayer(UUID uuid) {
+        return PLAYER_MAP.containsKey(uuid);
+    }
+
     private final LavaSurvivalPlugin plugin = LavaSurvivalPlugin.getInstance();
     private final Player player;
     private final UUID uuid;
     private final String name;
     private final String displayName;
     private StatsModel statsModel;
+    @Setter private boolean inGame = false;
 
     public LavaPlayer(Player player) {
         this.player = player;
@@ -65,6 +76,20 @@ public class LavaPlayer {
         });
     }
 
+    public void addPlayedGame() {
+        this.statsModel.increment(StatsModel.StatsEntry.GAMES_PLAYED);
+    }
 
+    public void addDeath() {
+        this.statsModel.increment(StatsModel.StatsEntry.DEATHS);
+    }
+
+    public void addWin() {
+        this.statsModel.increment(StatsModel.StatsEntry.WON_GAMES);
+    }
+
+    public void uploadStats() {
+        this.plugin.getStatsRepo().updateStats(this.statsModel);
+    }
 
 }

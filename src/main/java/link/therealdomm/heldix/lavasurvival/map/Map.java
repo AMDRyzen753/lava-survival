@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 
@@ -54,7 +53,6 @@ public class Map {
                 this.world = world;
                 this.cuboidRegion = new CuboidRegion(this.mapConfig.getFirstCorner().toLocation(),
                         this.mapConfig.getSecondCorner().toLocation());
-                this.cuboidRegion.registerListener(LavaSurvivalPlugin.getInstance());
                 return true;
             }
             LavaSurvivalPlugin.getInstance().getLogger().warning("Could not load world " + this.mapFolder.getName());
@@ -63,5 +61,9 @@ public class Map {
             LavaSurvivalPlugin.getInstance().getLogger().severe("Could not load world " + this.mapFolder.getName());
             return false;
         }
+    }
+
+    public void saveConfig() {
+        ConfigLoader.save(this.mapConfig, new File(this.mapFolder, "map_config.json"));
     }
 }

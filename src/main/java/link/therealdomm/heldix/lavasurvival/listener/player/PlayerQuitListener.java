@@ -22,7 +22,9 @@ public class PlayerQuitListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         LavaPlayer.remove(player.getUniqueId());
-        //BlockPartyPlugin.getInstance().getSpectatorHandler().removeSpectator(player);
+        LavaSurvivalPlugin.getInstance().getSpectatorHandler().removeSpectator(player);
+        LavaSurvivalPlugin.getInstance().getScoreboardManager().deleteScoreboard(player.getUniqueId());
+        LavaSurvivalPlugin.getInstance().getScoreboardManager().updateScoreboards();
         event.setQuitMessage(null);
         if (GameState.getGameState(LobbyGameState.class) == null) {
             return;
@@ -30,6 +32,7 @@ public class PlayerQuitListener implements Listener {
         if (LavaSurvivalPlugin.getInstance().getMainConfig().getMinPlayers() > Bukkit.getOnlinePlayers().size()) {
             if (Objects.requireNonNull(GameState.getGameState(LobbyGameState.class)).getLobbyCountdown() != null) {
                 Objects.requireNonNull(GameState.getGameState(LobbyGameState.class)).onReset();
+                Objects.requireNonNull(GameState.getGameState(LobbyGameState.class)).onInit();
             }
         }
     }
