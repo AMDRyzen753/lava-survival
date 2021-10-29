@@ -99,7 +99,7 @@ public class SetupCommand extends PluginCommand {
     public void sendHelp(CommandSender sender) {
         sender.sendMessage("§cPossible commands:");
         for (SetupSubCommand value : this.commandMap.values()) {
-            sender.sendMessage(" §a- §e/" + value.getName() + " §8- §7" + value.getDescription());
+            sender.sendMessage(" §a- §e/setup " + value.getName() + " §8- §7" + value.getDescription());
         }
     }
 

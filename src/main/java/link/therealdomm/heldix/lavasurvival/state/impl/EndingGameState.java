@@ -6,6 +6,7 @@ import link.therealdomm.heldix.lavasurvival.player.LavaPlayer;
 import link.therealdomm.heldix.lavasurvival.state.EnumGameState;
 import link.therealdomm.heldix.lavasurvival.state.GameState;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -52,6 +53,7 @@ public class EndingGameState extends GameState {
                 this.getPlugin(),
                 () -> {
                     if (integer.get() == 0) {
+                        Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F));
                         this.restartTask.cancel();
                         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                             CloudHandler.sendPlayerToLobby(onlinePlayer);
@@ -61,6 +63,7 @@ public class EndingGameState extends GameState {
                     }
                     if (Arrays.asList(this.getPlugin().getMainConfig().getRestartAnnounceTimes()).contains(integer.get())) {
                         Bukkit.broadcastMessage(MessageHandler.getMessage("ending.restart", integer.get()));
+                        Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 1.0F, 1.0F));
                     }
                     integer.getAndDecrement();
                 },

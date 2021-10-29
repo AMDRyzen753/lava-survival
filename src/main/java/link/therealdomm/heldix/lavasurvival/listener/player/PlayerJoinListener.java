@@ -3,7 +3,6 @@ package link.therealdomm.heldix.lavasurvival.listener.player;
 import link.therealdomm.heldix.lavasurvival.LavaSurvivalPlugin;
 import link.therealdomm.heldix.lavasurvival.player.LavaPlayer;
 import link.therealdomm.heldix.lavasurvival.state.GameState;
-import link.therealdomm.heldix.lavasurvival.state.impl.InGameState;
 import link.therealdomm.heldix.lavasurvival.state.impl.LobbyGameState;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;

@@ -9,7 +9,10 @@ import link.therealdomm.heldix.lavasurvival.state.GameState;
 import link.therealdomm.heldix.lavasurvival.util.lava.LavaAlgorithm;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Arrays;
@@ -37,7 +40,12 @@ public class InGameState extends GameState {
     }
 
     public void initLavaTask() {
+        ItemStack pickAxe = new ItemStack(Material.WOODEN_PICKAXE, 1);
+        ItemMeta pickAxeMeta = pickAxe.getItemMeta();
+        pickAxeMeta.setUnbreakable(true);
+        pickAxe.setItemMeta(pickAxeMeta);
         Bukkit.getOnlinePlayers().forEach(player -> player.getInventory().clear());
+        Bukkit.getOnlinePlayers().forEach(player -> player.getInventory().addItem(pickAxe));
         Map currentMap = this.getPlugin().getMapManager().getCurrentMap();
         this.lavaAlgorithm = new LavaAlgorithm(currentMap.getCuboidRegion().getRandomLocation(),
                 currentMap.getCuboidRegion());
@@ -80,8 +88,12 @@ public class InGameState extends GameState {
 
     @Override
     public void onInit() {
+        ItemStack pickAxe = new ItemStack(Material.WOODEN_PICKAXE, 1);
+        ItemMeta pickAxeMeta = pickAxe.getItemMeta();
+        pickAxeMeta.setUnbreakable(true);
+        pickAxe.setItemMeta(pickAxeMeta);
         Bukkit.getOnlinePlayers().forEach(player -> player.getInventory()
-                .addItem(new ItemStack(this.getPlugin().getMainConfig().getBuildingBlock(), 1)));
+                .addItem(new ItemStack(this.getPlugin().getMainConfig().getBuildingBlock(), 1), pickAxe));
         Bukkit.getOnlinePlayers().forEach(player -> player.teleport(
                 this.getPlugin().getMapManager().getCurrentMap().getMapConfig().getSpawnLocation().toLocation()
         ));
@@ -91,6 +103,7 @@ public class InGameState extends GameState {
                 this.getPlugin(),
                 () -> {
                     if (integer.get() == 0) {
+                        Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F));
                         this.buildTask.cancel();
                         this.buildTask = null;
                         this.initLavaTask();
@@ -99,6 +112,7 @@ public class InGameState extends GameState {
                     }
                     if (Arrays.asList(this.getPlugin().getMainConfig().getBuildAnnounceTimes()).contains(integer.get())) {
                         Bukkit.broadcastMessage(MessageHandler.getMessage("ingame.buildtime.left", integer.get()));
+                        Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 1.0F, 1.0F));
                     }
                     integer.getAndDecrement();
                 },

@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 @Getter
 public class SetLocSubCommand implements SetupSubCommand {
 
-    private final String name = "settloc";
+    private final String name = "setloc";
     private final String permission = "command.setup.setloc";
     private final String description = "Set the map bounds";
 

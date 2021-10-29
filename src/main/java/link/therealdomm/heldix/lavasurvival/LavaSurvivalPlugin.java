@@ -29,7 +29,6 @@ import java.io.File;
 @Author("TheRealDomm")
 @ApiVersion(ApiVersion.Target.v1_16)
 @Plugin(name = "LavaSurvival", version = "1.0.0")
-@DependsOn({@Dependency("ProtocolLib")})
 public class LavaSurvivalPlugin extends JavaPlugin {
 
     @Getter private static LavaSurvivalPlugin instance;
