@@ -25,7 +25,7 @@ public class LoadMapSubCommand implements SetupSubCommand {
             player.sendMessage("§cCould not load map " + strings[0]);
             return;
         }
-        player.teleport(LavaSurvivalPlugin.getInstance().getMapManager().getCurrentMap().getMapConfig().getSpawnLocation().toLocation());
+        player.teleport(LavaSurvivalPlugin.getInstance().getMapManager().getCurrentMap().getWorld().getSpawnLocation());
         player.sendMessage("§aYou have been teleported.");
     }
 }
