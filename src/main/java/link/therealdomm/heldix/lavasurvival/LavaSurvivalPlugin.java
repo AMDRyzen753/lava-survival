@@ -1,8 +1,16 @@
 package link.therealdomm.heldix.lavasurvival;
 
+import link.therealdomm.heldix.lavasurvival.command.SetupCommand;
+import link.therealdomm.heldix.lavasurvival.command.StartCommand;
 import link.therealdomm.heldix.lavasurvival.config.MainConfig;
 import link.therealdomm.heldix.lavasurvival.config.MessageConfig;
 import link.therealdomm.heldix.lavasurvival.handler.SpectatorHandler;
+import link.therealdomm.heldix.lavasurvival.listener.block.*;
+import link.therealdomm.heldix.lavasurvival.listener.entity.*;
+import link.therealdomm.heldix.lavasurvival.listener.inventory.InventoryClickListener;
+import link.therealdomm.heldix.lavasurvival.listener.inventory.InventoryDragListener;
+import link.therealdomm.heldix.lavasurvival.listener.player.*;
+import link.therealdomm.heldix.lavasurvival.listener.world.WeatherChangeListener;
 import link.therealdomm.heldix.lavasurvival.map.MapManager;
 import link.therealdomm.heldix.lavasurvival.repo.StatsRepo;
 import link.therealdomm.heldix.lavasurvival.scoreboard.ScoreboardManager;
@@ -64,8 +72,34 @@ public class LavaSurvivalPlugin extends JavaPlugin {
         this.scoreboardManager = new ScoreboardManager();
         this.spectatorHandler = new SpectatorHandler();
         this.registerUtility = new PluginRegisterUtility(this);
-        this.registerUtility.registerCommands("link.therealdomm.heldix.lavasurvival.command");
-        this.registerUtility.registerListeners("link.therealdomm.heldix.lavasurvival.listener");
+        this.registerUtility.registerCommands(SetupCommand.class, StartCommand.class);
+        this.registerUtility.registerListeners(
+                BlockBreakListener.class,
+                BlockBurnListener.class,
+                BlockFromToListener.class,
+                BlockIgniteListener.class,
+                BlockPlaceListener.class,
+                CreatureSpawnListener.class,
+                EntityDamageListener.class,
+                EntityExplodeListener.class,
+                EntityInteractListener.class,
+                HangingBreakListener.class,
+                HangingPlaceListener.class,
+                InventoryClickListener.class,
+                InventoryDragListener.class,
+                FoodLevelListener.class,
+                PlayerDeathListener.class,
+                PlayerDropItemListener.class,
+                PlayerInteractAtEntityListener.class,
+                PlayerInteractEntityListener.class,
+                PlayerInteractListener.class,
+                PlayerJoinListener.class,
+                PlayerLoginListener.class,
+                PlayerQuitListener.class,
+                PlayerRespawnListener.class,
+                PlayerSpawnListener.class,
+                WeatherChangeListener.class
+        );
         GameState.initialize();
     }
 
