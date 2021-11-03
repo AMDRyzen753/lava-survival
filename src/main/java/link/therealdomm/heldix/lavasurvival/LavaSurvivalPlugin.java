@@ -21,8 +21,6 @@ import link.therealdomm.heldix.lavasurvival.util.register.PluginRegisterUtility;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.annotation.dependency.Dependency;
-import org.bukkit.plugin.java.annotation.dependency.DependsOn;
 import org.bukkit.plugin.java.annotation.plugin.ApiVersion;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
 import org.bukkit.plugin.java.annotation.plugin.author.Author;
@@ -95,6 +93,7 @@ public class LavaSurvivalPlugin extends JavaPlugin {
                 PlayerInteractListener.class,
                 PlayerJoinListener.class,
                 PlayerLoginListener.class,
+                PlayerPickupListener.class,
                 PlayerQuitListener.class,
                 PlayerRespawnListener.class,
                 PlayerSpawnListener.class,

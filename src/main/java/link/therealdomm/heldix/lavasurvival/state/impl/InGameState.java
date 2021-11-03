@@ -11,6 +11,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitTask;
@@ -80,8 +81,9 @@ public class InGameState extends GameState {
     public void onNextGameState() {
         if (this.getGameState() == EnumGameState.IN_GAME) {
             this.onReset();
-            Bukkit.getOnlinePlayers().forEach(player ->
-                    player.teleport(this.getPlugin().getMainConfig().getRestartLobbyLocation().toLocation()));
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                onlinePlayer.teleport(this.getPlugin().getMainConfig().getRestartLobbyLocation().toLocation());
+            }
             new EndingGameState();
         }
     }

@@ -54,6 +54,13 @@
             <version>2.2.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Bukkit</artifactId>
+            <version>1.17-380</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/FastAsyncWorldEdit-Bukkit-1.17-380.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

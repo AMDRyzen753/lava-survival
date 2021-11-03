@@ -2,13 +2,10 @@ package link.therealdomm.heldix.lavasurvival.listener.block;
 
 import link.therealdomm.heldix.lavasurvival.state.EnumGameState;
 import link.therealdomm.heldix.lavasurvival.state.GameState;
-import link.therealdomm.heldix.lavasurvival.state.impl.InGameState;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-
-import java.util.Objects;
 
 /**
  * @author TheRealDomm

@@ -1,6 +1,7 @@
 package link.therealdomm.heldix.lavasurvival.util.task;
 
 import link.therealdomm.heldix.lavasurvival.util.lava.LavaAlgorithm;
+import link.therealdomm.heldix.lavasurvival.util.location.SimpleLocation;
 import link.therealdomm.heldix.lavasurvival.util.region.CuboidRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -29,10 +30,10 @@ public class LocationIterator {
         return thread;
     });
 
-    public Future<List<Location>> submitCalculation(LavaAlgorithm.CalculatorValues values) {
-        CompletableFuture<List<Location>> completableFuture = new CompletableFuture<>();
+    public Future<List<SimpleLocation>> submitCalculation(LavaAlgorithm.CalculatorValues values) {
+        CompletableFuture<List<SimpleLocation>> completableFuture = new CompletableFuture<>();
         this.executorService.submit(() -> {
-            List<Location> locations = new ArrayList<>();
+            List<SimpleLocation> locations = new ArrayList<>();
             CuboidRegion region = values.getRegion();
             World world = Bukkit.getWorld(values.getWorld());
             int xI = values.getXInitial();
@@ -44,8 +45,11 @@ public class LocationIterator {
                     for (int z = zI - run; z <= zI + run; z++) {
                         if ((xI - x) * (xI - x) + (yI - y) * (yI - y) + (zI - z) * (zI - z) <= (run*run)) {
                             if (region.isInside(1, x, y, z)) {
-                                Location location = new Location(world, x, y, z);
-                                locations.add(location);
+                                SimpleLocation location = new SimpleLocation(world.getName(), x, y, z);
+                                if (!values.getAlgorithm().getLavaLocations().contains(location)) {
+                                    values.getAlgorithm().getLavaLocations().add(location);
+                                    locations.add(location);
+                                }
                             }
                         }
                     }

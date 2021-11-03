@@ -2,13 +2,13 @@ package link.therealdomm.heldix.lavasurvival.util.lava;
 
 import link.therealdomm.heldix.lavasurvival.LavaSurvivalPlugin;
 import link.therealdomm.heldix.lavasurvival.scoreboard.ScoreType;
+import link.therealdomm.heldix.lavasurvival.util.location.SimpleLocation;
 import link.therealdomm.heldix.lavasurvival.util.region.CuboidRegion;
 import link.therealdomm.heldix.lavasurvival.util.task.LocationIterator;
 import lombok.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -20,6 +20,8 @@ import java.util.logging.Level;
  */
 public class LavaAlgorithm {
 
+    @Getter private final List<SimpleLocation> lavaLocations = new ArrayList<>();
+    private boolean borderDeployed = false;
     private final Location initialLocation;
     private final CuboidRegion region;
     @Getter private int iterationCount = 0;
@@ -31,15 +33,17 @@ public class LavaAlgorithm {
     }
 
     public void iterateOnce() {
+        //this.dispatchWorldEdit();
         Bukkit.getScheduler().runTaskAsynchronously(
                 LavaSurvivalPlugin.getInstance(),
                 () -> {
                     try {
-                        List<Location> locations = LocationIterator.get()
+                        List<SimpleLocation> locations = LocationIterator.get()
                                 .submitCalculation(
                                         CalculatorValues.builder()
                                                 .region(this.region)
                                                 .world(Objects.requireNonNull(this.initialLocation.getWorld()).getName())
+                                                .algorithm(this)
                                                 .xInitial(this.initialLocation.getBlockX())
                                                 .yInitial(this.initialLocation.getBlockY())
                                                 .zInitial(this.initialLocation.getBlockZ())
@@ -72,19 +76,51 @@ public class LavaAlgorithm {
         );
     }
 
-    public synchronized void changeLocationsSynchronous(List<Location> locations) {
+    public synchronized void changeLocationsSynchronous(List<SimpleLocation> locations) {
+        int maxRadius = LavaSurvivalPlugin.getInstance().getMainConfig().getMaxLavaRadius();
+        if (maxRadius <= this.iterationCount && maxRadius != -1) {
+            if (!this.borderDeployed) {
+                this.borderDeployed = true;
+                Bukkit.getScheduler().runTask(
+                        LavaSurvivalPlugin.getInstance(),
+                        () -> {
+                            World world = this.initialLocation.getWorld();
+                            WorldBorder worldBorder = world.getWorldBorder();
+                            worldBorder.setCenter(this.initialLocation);
+                            worldBorder.setSize(LavaSurvivalPlugin.getInstance().getMainConfig().getWorldBorderRadius());
+                            worldBorder.setWarningDistance(15);
+                            worldBorder.setDamageBuffer(0);
+                            worldBorder.setSize(15, LavaSurvivalPlugin.getInstance().getMainConfig()
+                                    .getWorldBorderShrinkTime().longValue());
+                        }
+                );
+            }
+            return;
+        }
         this.iterationCount++;
         LavaSurvivalPlugin.getInstance().getScoreboardManager().updateScoreboards(ScoreType.LAVA_SIZE);
-        for (Location location : locations) {
-            if (location.getBlock().getType().equals(Material.LAVA)) {
-                continue;
-            }
+        for (SimpleLocation location : locations) {
             Bukkit.getScheduler().runTask(
                     LavaSurvivalPlugin.getInstance(),
-                    () -> location.getBlock().setType(Material.LAVA, false)
+                    () -> location.toLocation().getBlock().setType(Material.LAVA, false)
             );
         }
     }
+
+    /*public void dispatchWorldEdit() {
+        this.iterationCount++;
+        LavaSurvivalPlugin.getInstance().getScoreboardManager().updateScoreboards(ScoreType.LAVA_SIZE);
+        EditSession editSession = WorldEdit.getInstance().getEditSessionFactory()
+                .getEditSession(new BukkitWorld(Objects.requireNonNull(this.initialLocation.getWorld())), -1);
+        Pattern pattern = BukkitAdapter.adapt(Material.LAVA.createBlockData());
+        BlockVector3 blockVector3 = BlockVector3Imp.at(
+                this.initialLocation.getX(),
+                this.initialLocation.getY(),
+                this.initialLocation.getZ()
+        );
+        editSession.makeSphere(blockVector3, pattern, this.iterationCount, true);
+        editSession.flushQueue();
+    }*/
 
     @Data
     @Builder
@@ -93,6 +129,7 @@ public class LavaAlgorithm {
     public static class CalculatorValues {
         private CuboidRegion region;
         private String world;
+        private LavaAlgorithm algorithm;
         private int xInitial;
         private int yInitial;
         private int zInitial;

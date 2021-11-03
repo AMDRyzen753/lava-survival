@@ -4,6 +4,6 @@ module lava.survival {
     requires org.bukkit;
     requires lombok;
     requires gson;
+    requires FastAsyncWorldEdit.Bukkit;
     requires annotations;
-
 }

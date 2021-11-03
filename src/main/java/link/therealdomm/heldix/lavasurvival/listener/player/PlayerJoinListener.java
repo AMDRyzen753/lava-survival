@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author TheRealDomm
@@ -35,8 +36,16 @@ public class PlayerJoinListener implements Listener {
         }
         LavaPlayer.getPlayer(player);
         player.teleport(LavaSurvivalPlugin.getInstance().getMainConfig().getLobbySpawnLocation().toLocation());
-        LavaSurvivalPlugin.getInstance().getScoreboardManager().createDefault(player.getUniqueId()).setScoreboard();
-        LavaSurvivalPlugin.getInstance().getScoreboardManager().updateScoreboards();
+        int random = ThreadLocalRandom.current().nextInt(2, 7);
+        Bukkit.getScheduler().runTaskLater(
+                LavaSurvivalPlugin.getInstance(),
+                () -> {
+                    LavaSurvivalPlugin.getInstance().getScoreboardManager().createDefault(player.getUniqueId())
+                            .setScoreboard();
+                    LavaSurvivalPlugin.getInstance().getScoreboardManager().updateScoreboards();
+                },
+                random
+        );
         if (LavaSurvivalPlugin.getInstance().getMainConfig().getMinPlayers() <= Bukkit.getOnlinePlayers().size()) {
             if (Objects.requireNonNull(GameState.getGameState(LobbyGameState.class)).getLobbyCountdown() == null) {
                 Objects.requireNonNull(GameState.getGameState(LobbyGameState.class)).getWaitingTask().cancel();

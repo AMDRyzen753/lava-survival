@@ -23,7 +23,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = false)
 public class MainConfig implements Config {
 
-    private double configVersion = 1.1D;
+    private double configVersion = 1.2D;
     private MySQLData mySQLData = new MySQLData();
     private String lobbyWorldName = "lobby";
     private ConfigLocation lobbySpawnLocation = new ConfigLocation();
@@ -31,6 +31,9 @@ public class MainConfig implements Config {
     private Integer increaseLava = 10;
     private Integer lobbyTimer = 60;
     private Integer fullRoundTimer = 10;
+    private Integer maxLavaRadius = -1;
+    private Integer worldBorderShrinkTime = 60;
+    private Integer worldBorderRadius = 200;
     private Integer[] lobbyAnnounceTimes = new Integer[]{60, 30, 20, 10, 5, 3, 2, 1};
     private Integer restartTimer = 20;
     private Integer[] restartAnnounceTimes = new Integer[]{20, 10, 5, 3, 2, 1};
